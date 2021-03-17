@@ -49,7 +49,7 @@ class DataSearch extends SearchDelegate {
     }
 
     return FutureBuilder(
-      future: new AddressProvider().findByPostcode(context, query),
+      future: provider.findPrivado(context, query),
       builder: (BuildContext context, AsyncSnapshot<List<Address>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:

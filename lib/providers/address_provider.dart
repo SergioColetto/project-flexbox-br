@@ -4,15 +4,17 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:happy_postcode_flutter/models/address.dart';
+import 'package:happy_postcode_flutter/service/IPostcode_service.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:postcode/postcode.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AddressProvider extends ChangeNotifier {
+  AddressProvider(this._postcodeService);
+  final IPostcodeService _postcodeService;
+
   String _apikey = 'iddqd';
   String _url = 'api.ideal-postcodes.co.uk';
-
-  String _urlPrivado = 'location-delivery.herokuapp.com';
 
   List<Address> _addresses = [];
   List<Address> _route = [];
@@ -67,26 +69,7 @@ class AddressProvider extends ChangeNotifier {
 
   Future<List<Address>> findPrivado(
       BuildContext context, final String postcode) async {
-    final response = await client.get(
-      Uri.https(_urlPrivado, 'api/location', <String, String>{
-        'postcode': postcode,
-      }),
-    );
-
-    try {
-      final body = json.decode(response.body);
-      _addresses = builderAddresses(body);
-    } on NoSuchMethodError catch (_) {
-      if (response.statusCode == 404) {
-        _dialog(context, "Postcode Not Found");
-      }
-      if (response.statusCode == 402) {
-        _dialog(context,
-            "Limit reached. One of your lookup limits has been breached for today");
-      }
-      _addresses = [];
-    }
-
+    final addresses = _postcodeService.getAllAddress(postcode);
     return addresses;
   }
 
@@ -173,13 +156,7 @@ class AddressProvider extends ChangeNotifier {
   }
 
   void _sendAddressToPrivateServer() {
-    client.post(
-      Uri.https('location-delivery.herokuapp.com', 'api/location'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(_addresses),
-    );
+    _postcodeService.sendPostcodes(addresses);
   }
 
   bool includes(Address address) {

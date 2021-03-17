@@ -41,6 +41,8 @@ dependencies:
   flutter_mapbox_navigation: ^0.0.19
   geolocator: ^5.3.2+2
   permission_handler: ^5.0.1+1
+  vexana: ^1.2.2
+
 
 dev_dependencies:
   flutter_test:
