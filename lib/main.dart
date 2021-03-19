@@ -6,6 +6,9 @@ import 'package:provider/provider.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 import 'components/app_theme.dart';
+import 'core/network/network_manager.dart';
+import 'service/IPostcode_service.dart';
+import 'service/postcode_service.dart';
 
 void main() async {
   await DotEnv.load(fileName: '.env');
@@ -17,7 +20,9 @@ class PostcodeApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => new AddressProvider()),
+        ChangeNotifierProvider(
+          create: (_) => new AddressProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

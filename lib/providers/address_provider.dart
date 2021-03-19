@@ -138,14 +138,6 @@ class AddressProvider extends ChangeNotifier {
             ),
         barrierDismissible: false);
   }
-
-  bool includes(Address address) {
-    return _route.contains(address);
-  }
-
-  void addAddress(List<Address> data) {
-    _addresses = data;
-  }
 }
 
 class LoggingInterceptor implements InterceptorContract {

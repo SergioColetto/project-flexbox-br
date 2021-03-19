@@ -1,6 +1,7 @@
 import 'dart:convert';
+import 'package:vexana/vexana.dart';
 
-class Address {
+class Address extends INetworkModel<Address> {
   String description;
   String placeId;
   double longitude;
@@ -29,6 +30,9 @@ class Address {
     data['longitude'] = this.longitude;
     return data;
   }
+
+  @override
+  Address fromJson(Map<String, Object> json) => Address.fromJson(json);
 }
 
 List<Address> builderAddresses(List<dynamic> data) {

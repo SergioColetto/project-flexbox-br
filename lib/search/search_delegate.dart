@@ -47,7 +47,7 @@ class DataSearch extends SearchDelegate {
     final provider = Provider.of<AddressProvider>(context, listen: false);
 
     return FutureBuilder(
-      future: new AddressProvider().findByQuery(context, query),
+      future: provider.findByQuery(context, query),
       builder: (BuildContext context, AsyncSnapshot<List<Address>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -87,10 +87,7 @@ class DataSearch extends SearchDelegate {
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.add_circle,
-                            color: provider.includes(address)
-                                ? Colors.green
-                                : Colors.grey),
+                        icon: Icon(Icons.add_circle, color: Colors.green),
                         onPressed: () async {
                           final addressById =
                               await provider.findById(address.placeId);
