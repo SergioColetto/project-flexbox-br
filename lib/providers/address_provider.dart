@@ -4,15 +4,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:happy_postcode_flutter/models/address.dart';
+import 'package:happy_postcode_flutter/shared/Config.dart';
 import 'package:http_interceptor/http_interceptor.dart';
-import 'package:postcode/postcode.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AddressProvider extends ChangeNotifier {
-  String _apikey = 'iddqd';
-  String _url = 'api.ideal-postcodes.co.uk';
-
-  String _urlPrivado = 'location-delivery.herokuapp.com';
+  String _apikey = Config.googleKey;
+  String _url = 'maps.googleapis.com';
 
   List<Address> _addresses = [];
   List<Address> _route = [];
@@ -32,68 +30,40 @@ class AddressProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<Address>> findByPostcode(
-      BuildContext context, final String postcode) async {
-    if (!isValid(postcode)) {
-      _dialog(context, "Invalid Postcode");
-      return null;
-    }
-
+  Future<List<Address>> findByQuery(
+      BuildContext context, final String query) async {
     final response = await client.get(
-        Uri.https('$_url', 'v1/postcodes/$postcode',
-            <String, String>{'api_key': _apikey}),
+        Uri.https('$_url', 'maps/api/place/autocomplete/json',
+            <String, String>{'input': query, 'key': _apikey}),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         });
 
-    try {
-      Map<String, dynamic> body = jsonDecode(response.body);
-      _addresses = builderAddresses(body['result']);
-      _sendAddressToPrivateServer();
-    } on NoSuchMethodError catch (_) {
-      if (response.statusCode == 404) {
-        _dialog(context, "Postcode Not Found");
-      }
-      if (response.statusCode == 402) {
-        _dialog(context,
-            "Limit reached. One of your lookup limits has been breached for today");
-      }
-
-      _addresses = [];
-    }
+    Map<String, dynamic> body = jsonDecode(response.body);
+    _addresses = builderAddresses(body['predictions']);
 
     return addresses;
   }
 
-  Future<List<Address>> findPrivado(
-      BuildContext context, final String postcode) async {
+  Future<Address> findById(final String id) async {
     final response = await client.get(
-      Uri.https(_urlPrivado, 'api/location', <String, String>{
-        'postcode': postcode,
-      }),
-    );
+        Uri.https('$_url', 'maps/api/place/details/json', <String, String>{
+          'place_id': id,
+          'fields': 'address_components,formatted_address,geometry',
+          'key': _apikey,
+        }),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        });
 
-    try {
-      final body = json.decode(response.body);
-      _addresses = builderAddresses(body);
-    } on NoSuchMethodError catch (_) {
-      if (response.statusCode == 404) {
-        _dialog(context, "Postcode Not Found");
-      }
-      if (response.statusCode == 402) {
-        _dialog(context,
-            "Limit reached. One of your lookup limits has been breached for today");
-      }
-      _addresses = [];
-    }
-
-    return addresses;
+    Map<String, dynamic> body = jsonDecode(response.body);
+    return Address.buildFromGoogle(body['result']);
   }
 
   void routeAdd(BuildContext context, Address address) {
     if (_route.contains(address)) return;
     if (_route.length >= 9) {
-      _dialog(context, "Limit of address in route");
+      _dialog(context, "Limite de Endereços na Rota");
       return;
     }
     _route.add(address);
@@ -125,7 +95,7 @@ class AddressProvider extends ChangeNotifier {
 
   void launchRoute(BuildContext context) async {
     if (_route.length == 0) {
-      _dialog(context, "Add address in route.");
+      _dialog(context, "Adicione um Endereço pra Começar");
       return;
     }
     final url = _createRoute();
@@ -161,25 +131,12 @@ class AddressProvider extends ChangeNotifier {
               ),
               actions: [
                 TextButton(
-                  child: Text(
-                    'Close',
-                    style: TextStyle(color: Colors.black),
-                  ),
+                  child: Text('Fechar'),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
             ),
         barrierDismissible: false);
-  }
-
-  void _sendAddressToPrivateServer() {
-    client.post(
-      Uri.https('location-delivery.herokuapp.com', 'api/location'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(_addresses),
-    );
   }
 
   bool includes(Address address) {
@@ -188,10 +145,6 @@ class AddressProvider extends ChangeNotifier {
 
   void addAddress(List<Address> data) {
     _addresses = data;
-  }
-
-  void dialog(BuildContext context, String msg) {
-    _dialog(context, msg);
   }
 }
 

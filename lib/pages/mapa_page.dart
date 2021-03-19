@@ -28,7 +28,7 @@ class _MapaPageState extends State<MapaPage> {
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: _markers.first.position,
-            zoom: 11.0,
+            zoom: 13.0,
           ),
         ),
       );
@@ -57,11 +57,12 @@ class _MapaPageState extends State<MapaPage> {
         .map((address) => Marker(
             markerId: MarkerId(Uuid().v1()),
             position: LatLng(address.latitude, address.longitude),
-            infoWindow: InfoWindow(title: address.line1),
+            infoWindow: InfoWindow(title: address.description),
             draggable: false))
         .toSet();
 
     return Scaffold(
+      drawer: Drawer(),
       body: FutureBuilder(
         future: _initialize(),
         builder: (context, snapshot) {
@@ -84,7 +85,7 @@ class _MapaPageState extends State<MapaPage> {
                       onMapCreated: _onMapCreated,
                       initialCameraPosition: CameraPosition(
                         target: _initialPosition,
-                        zoom: 11.0,
+                        zoom: 13.0,
                       ),
                       myLocationEnabled: true,
                     ),

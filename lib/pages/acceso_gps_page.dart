@@ -38,10 +38,9 @@ class _AccesoGpsPageState extends State<AccesoGpsPage>
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('You need the GPS to use this app'),
+          Text('Você precisa ativar o GPS para usar o App'),
           MaterialButton(
-              child:
-                  Text('Request Access', style: TextStyle(color: Colors.white)),
+              child: Text('Ativar', style: TextStyle(color: Colors.white)),
               color: Colors.black,
               shape: StadiumBorder(),
               elevation: 0,
@@ -63,12 +62,17 @@ class _AccesoGpsPageState extends State<AccesoGpsPage>
       case PermissionStatus.granted:
         await Navigator.pushReplacementNamed(context, 'loading');
         break;
-
       case PermissionStatus.undetermined:
+        break;
       case PermissionStatus.denied:
+        break;
       case PermissionStatus.restricted:
+        break;
       case PermissionStatus.permanentlyDenied:
         openAppSettings();
+        break;
+      case PermissionStatus.limited:
+        break;
     }
   }
 }

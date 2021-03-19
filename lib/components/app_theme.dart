@@ -25,8 +25,8 @@ class AppTheme {
   }
 
   static ThemeData buildTheme() {
-    final Color primaryColor = HexColor('#54D3C2');
-    final Color secondaryColor = HexColor('#54D3C2');
+    final Color primaryColor = Color.fromRGBO(68, 61, 58, 1);
+    final Color secondaryColor = Color.fromRGBO(68, 61, 58, 1);
 
     final ColorScheme colorScheme = const ColorScheme.light().copyWith(
       primary: primaryColor,
@@ -38,10 +38,11 @@ class AppTheme {
     );
 
     final inputDecorationTheme = InputDecorationTheme(
-        hintStyle: TextStyle(
-      color: Colors.white,
-      fontSize: 16,
-    ));
+      hintStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 16,
+      ),
+    );
 
     final ThemeData base = ThemeData.dark();
 
@@ -66,7 +67,7 @@ class AppTheme {
       textTheme: _buildTextTheme(base.textTheme),
       primaryTextTheme: _buildTextTheme(base.primaryTextTheme),
       accentTextTheme: _buildTextTheme(base.accentTextTheme),
-      platform: TargetPlatform.iOS,
+      // platform: TargetPlatform.iOS,
     );
   }
 }
@@ -81,4 +82,86 @@ class HexColor extends Color {
     }
     return int.parse(hexColor, radix: 16);
   }
+}
+
+class ThemeChanger with ChangeNotifier {
+
+  bool _darkTheme   = false;
+  bool _customTheme = false;
+
+  ThemeData _currentTheme;
+
+  bool get darkTheme   => this._darkTheme;
+  bool get customTheme => this._customTheme;
+  ThemeData get currentTheme => this._currentTheme;
+
+
+  ThemeChanger( int theme ) {
+
+    switch( theme ) {
+
+      case 1: // light
+        _darkTheme   = false;
+        _customTheme = false;
+        _currentTheme = ThemeData.light();
+        break;
+
+      case 2: // Dark
+        _darkTheme   = true;
+        _customTheme = false;
+        _currentTheme = ThemeData.dark().copyWith(
+            accentColor: Colors.pink
+        );
+        break;
+
+      case 3: // Dark
+        _darkTheme   = false;
+        _customTheme = true;
+        break;
+
+      default:
+        _darkTheme = false;
+        _darkTheme = false;
+        _currentTheme = ThemeData.light();
+    }
+  }
+
+
+
+  set darkTheme( bool value ) {
+    _customTheme = false;
+    _darkTheme = value;
+
+    if ( value ) {
+      _currentTheme = ThemeData.dark().copyWith(
+          accentColor: Colors.pink
+      );
+    } else {
+      _currentTheme = ThemeData.light();
+    }
+
+    notifyListeners();
+  }
+
+  set customTheme( bool value ) {
+    _customTheme = value;
+    _darkTheme = false;
+
+    if ( value ) {
+      _currentTheme = ThemeData.dark().copyWith(
+        accentColor: Color(0xff48A0EB),
+        primaryColorLight: Colors.white,
+        scaffoldBackgroundColor: Color(0xff16202B),
+        textTheme: TextTheme(
+            body1: TextStyle( color: Colors.white )
+        ),
+        // textTheme.body1.color
+      );
+    } else {
+      _currentTheme = ThemeData.light();
+    }
+
+    notifyListeners();
+  }
+
 }

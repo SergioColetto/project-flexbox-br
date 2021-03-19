@@ -47,7 +47,7 @@ void _dialog(BuildContext context, String message) {
             title: Text(message),
             actions: [
               FlatButton(
-                child: Text('Close'),
+                child: Text('Fechar'),
                 onPressed: () => Navigator.pop(context),
               ),
             ],

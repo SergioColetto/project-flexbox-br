@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:happy_postcode_flutter/components/centered_message.dart';
 import 'package:happy_postcode_flutter/providers/address_provider.dart';
 import 'package:provider/provider.dart';
@@ -23,9 +24,7 @@ class _TimeLineRouteListState extends State<TimeLineRouteList> {
                     children: [
                       Expanded(
                         child: ListTile(
-                          title: Text(address.line1),
-                          subtitle:
-                              Text('${address.postcode} | ${address.postTown}'),
+                          title: Text(address.description),
                         ),
                       ),
                       IconButton(
@@ -39,7 +38,7 @@ class _TimeLineRouteListState extends State<TimeLineRouteList> {
                 );
               }).toList())
             : CenteredMessage(
-                "Add address to get started",
+                "Adicione um endereço",
                 icon: Icons.room_outlined,
               ));
   }
@@ -143,10 +142,15 @@ class Timeline extends StatelessWidget {
       Expanded(child: child),
     ];
 
-    return IntrinsicHeight(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: isLeftAligned ? timelineTile : timelineTile.reversed.toList(),
+    return Slidable(
+      actionPane: SlidableDrawerActionPane(),
+      actionExtentRatio: 0.25,
+      child: IntrinsicHeight(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children:
+              isLeftAligned ? timelineTile : timelineTile.reversed.toList(),
+        ),
       ),
     );
   }

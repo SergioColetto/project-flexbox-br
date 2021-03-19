@@ -34,7 +34,7 @@ class _NavigateButtonState extends State<NavigateButton> {
     _options = MapBoxOptions(
         mode: MapBoxNavigationMode.drivingWithTraffic,
         animateBuildRoute: false,
-        language: "en",
+        language: "pt-br",
         units: VoiceUnits.metric);
   }
 
@@ -44,7 +44,7 @@ class _NavigateButtonState extends State<NavigateButton> {
     return Consumer<AddressProvider>(
       builder: (context, provider, child) => MaterialButton(
         minWidth: width - 120,
-        child: Text('Start Traval', style: TextStyle(color: Colors.white)),
+        child: Text('Iniciar viagem', style: TextStyle(color: Colors.white)),
         color: HexColor("#ff5208"),
         shape: StadiumBorder(),
         elevation: 0,
@@ -57,13 +57,13 @@ class _NavigateButtonState extends State<NavigateButton> {
                 .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
             wayPoints.add(new WayPoint(
-                name: 'My local',
+                name: 'Meu Local',
                 latitude: position.latitude,
                 longitude: position.longitude));
 
             wayPoints.addAll(provider.route
                 .map((address) => new WayPoint(
-                    name: address.line1,
+                    name: address.description,
                     latitude: address.latitude,
                     longitude: address.longitude))
                 .toList());
@@ -101,14 +101,8 @@ class _NavigateButtonState extends State<NavigateButton> {
         }
         break;
       case MapBoxEvent.navigation_finished:
-        _controller.finishNavigation();
-        _directions.finishNavigation();
         break;
       case MapBoxEvent.navigation_cancelled:
-        _routeBuilt = false;
-        _isNavigating = false;
-        _controller.finishNavigation();
-        _directions.finishNavigation();
         break;
       default:
         print(e.eventType);

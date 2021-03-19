@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 
 class DataSearch extends SearchDelegate {
   @override
-  String get searchFieldLabel => "SW1A 1AA";
+  String get searchFieldLabel => "Av Tiradentes Maringá PR 87013-260";
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -39,17 +39,15 @@ class DataSearch extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
+    return Container();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
     final provider = Provider.of<AddressProvider>(context, listen: false);
 
-    if (!isValid(query)) {
-      return CenteredMessage(
-        "Enter a valid postcode",
-        icon: Icons.search,
-      );
-    }
-
     return FutureBuilder(
-      future: new AddressProvider().findByPostcode(context, query),
+      future: new AddressProvider().findByQuery(context, query),
       builder: (BuildContext context, AsyncSnapshot<List<Address>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -68,15 +66,45 @@ class DataSearch extends SearchDelegate {
             break;
           case ConnectionState.done:
             if (snapshot.hasData) {
-              provider.addAddress(snapshot.data);
-              if (provider.addresses.isNotEmpty)
+              final addresses = snapshot.data;
+              if (addresses.isNotEmpty) {
                 return ListView(
-                    children: provider.addresses
-                        .map((address) => _buildRow(provider, address, context))
-                        .toList());
+                    children: addresses.map((address) {
+                  return Row(
+                    children: [
+                      IconButton(
+                          icon: Icon(Icons.navigation, color: Colors.grey),
+                          onPressed: () async {
+                            final addressById =
+                                await provider.findById(address.placeId);
+
+                            provider.launchCoordinates(
+                                addressById.latitude, addressById.longitude);
+                          }),
+                      Expanded(
+                        child: ListTile(
+                          title: Text(address.description),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.add_circle,
+                            color: provider.includes(address)
+                                ? Colors.green
+                                : Colors.grey),
+                        onPressed: () async {
+                          final addressById =
+                              await provider.findById(address.placeId);
+                          provider.routeAdd(context, addressById);
+                          this.close(context, MainPage());
+                        },
+                      ),
+                    ],
+                  );
+                }).toList());
+              }
             }
             return CenteredMessage(
-              "No Postcode found",
+              "Endereço não encontrado",
               icon: Icons.warning,
             );
             break;
@@ -84,58 +112,17 @@ class DataSearch extends SearchDelegate {
             break;
         }
         return CenteredMessage(
-          "Unknown error",
+          "Erro Desconhecido",
           icon: Icons.warning,
         );
       },
     );
   }
 
-  Row _buildRow(
-      AddressProvider provider, Address address, BuildContext context) {
-    return Row(
-      children: [
-        IconButton(
-            icon: Icon(Icons.navigation, color: Colors.grey),
-            onPressed: () {
-              provider.launchCoordinates(address.latitude, address.longitude);
-            }),
-        Expanded(
-          child: ListTile(
-            title: Text(address.line1),
-            subtitle: Text('${address.postcode} ${address.line3}'),
-          ),
-        ),
-        IconButton(
-          icon: Icon(Icons.add_circle,
-              color: provider.includes(address) ? Colors.green : Colors.grey),
-          onPressed: () {
-            provider.routeAdd(context, address);
-            this.close(context, MainPage());
-          },
-        ),
-      ],
-    );
-  }
+  @override
+  TextStyle get searchFieldStyle =>
+      TextStyle(color: Colors.white, fontSize: 16);
 
   @override
-  Widget buildSuggestions(BuildContext context) {
-    final provider = Provider.of<AddressProvider>(context, listen: false);
-    return ListView(
-        children: provider.addresses
-            .map((address) => _buildRow(provider, address, context))
-            .toList());
-  }
-
-  @override
-  TextStyle get searchFieldStyle => TextStyle(
-        color: Colors.white,
-        fontSize: 16,
-      );
-
-  @override
-  ThemeData appBarTheme(BuildContext context) {
-    final ThemeData base = AppTheme.buildTheme();
-    return base;
-  }
+  ThemeData appBarTheme(BuildContext context) => AppTheme.buildTheme();
 }
