@@ -15,13 +15,12 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<AddressProvider>(
-      builder: (context, provider, child) => MaterialApp(
-        home: DefaultTabController(
+      builder: (context, provider, child) => Scaffold(
+        body: DefaultTabController(
           length: 3,
           child: Scaffold(
             drawer: _MenuPrincipal(),
             appBar: AppBar(
-              backgroundColor: AppTheme.buildTheme().appBarTheme.color,
               bottom: TabBar(
                 tabs: [
                   Tab(text: "LISTA"),
@@ -71,11 +70,33 @@ class MainPage extends StatelessWidget {
   }
 }
 
-class _MenuPrincipal extends StatelessWidget {
-
+class _ListaOpciones extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
+    return ListView.separated(
+      physics: BouncingScrollPhysics(),
+      separatorBuilder: (context, i) => Divider(
+        color: appTheme.primaryColorLight,
+      ),
+      itemCount: pageRoutes.length,
+      itemBuilder: (context, i) => ListTile(
+        leading: FaIcon(pageRoutes[i].icon, color: appTheme.accentColor),
+        title: Text(pageRoutes[i].titulo),
+        trailing: Icon(Icons.chevron_right, color: appTheme.accentColor),
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => pageRoutes[i].page));
+        },
+      ),
+    );
+  }
+}
+
+class _MenuPrincipal extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     final appTheme = Provider.of<ThemeChanger>(context);
     final accentColor = appTheme.currentTheme.accentColor;
 
@@ -83,82 +104,30 @@ class _MenuPrincipal extends StatelessWidget {
       child: Container(
         child: Column(
           children: <Widget>[
-
             SafeArea(
               child: Container(
                 width: double.infinity,
-                height: 200,
+                height: 150,
                 child: CircleAvatar(
                   backgroundColor: accentColor,
-                  child: Text('FH', style: TextStyle( fontSize: 50),),
+                  child: Text(
+                    'FH',
+                    style: TextStyle(fontSize: 50),
+                  ),
                 ),
               ),
             ),
-
-
-            Expanded(
-                child: _ListaOpciones()
-            ),
-
-
+            Expanded(child: _ListaOpciones()),
             ListTile(
-              leading: Icon( Icons.lightbulb_outline, color: accentColor ),
+              leading: Icon(Icons.lightbulb_outline, color: accentColor),
               title: Text('Dark Mode'),
               trailing: Switch.adaptive(
-                  value: appTheme.darkTheme ,
+                  value: appTheme.darkTheme,
                   activeColor: accentColor,
-                  onChanged: ( value ) => appTheme.darkTheme = value
-              ),
+                  onChanged: (value) => appTheme.darkTheme = value),
             ),
-
-
-            SafeArea(
-              bottom: true,
-              top: false,
-              left: false,
-              right: false,
-              child: ListTile(
-                leading: Icon( Icons.add_to_home_screen, color: accentColor ),
-                title: Text('Custom Theme'),
-                trailing: Switch.adaptive(
-                    value: appTheme.customTheme,
-                    activeColor: accentColor,
-                    onChanged: ( value ) => appTheme.customTheme = value
-                ),
-              ),
-            ),
-
-
           ],
         ),
-
-      ),
-    );
-  }
-}
-
-class _ListaOpciones extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-
-    final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
-
-    return ListView.separated(
-      physics: BouncingScrollPhysics(),
-      separatorBuilder: ( context, i) => Divider(
-        color: appTheme.primaryColorLight,
-      ),
-      itemCount: pageRoutes.length,
-      itemBuilder: (context, i) => ListTile(
-
-        leading: FaIcon( pageRoutes[i].icon , color: appTheme.accentColor ),
-        title: Text( pageRoutes[i].titulo ),
-        trailing: Icon( Icons.chevron_right, color: appTheme.accentColor ),
-        onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=> pageRoutes[i].page ));
-        },
-
       ),
     );
   }

@@ -4,9 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:happy_postcode_flutter/helpers/map_marker.dart';
 import 'package:happy_postcode_flutter/helpers/uber_map_theme.dart';
-import 'package:happy_postcode_flutter/models/address.dart';
 import 'package:happy_postcode_flutter/providers/address_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -28,7 +26,7 @@ class _MapaPageState extends State<MapaPage> {
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: _markers.first.position,
-            zoom: 13.0,
+            zoom: 12.0,
           ),
         ),
       );
@@ -62,7 +60,6 @@ class _MapaPageState extends State<MapaPage> {
         .toSet();
 
     return Scaffold(
-      drawer: Drawer(),
       body: FutureBuilder(
         future: _initialize(),
         builder: (context, snapshot) {
@@ -85,7 +82,7 @@ class _MapaPageState extends State<MapaPage> {
                       onMapCreated: _onMapCreated,
                       initialCameraPosition: CameraPosition(
                         target: _initialPosition,
-                        zoom: 13.0,
+                        zoom: 12.0,
                       ),
                       myLocationEnabled: true,
                     ),

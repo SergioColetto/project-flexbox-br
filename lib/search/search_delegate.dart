@@ -5,7 +5,6 @@ import 'package:happy_postcode_flutter/components/centered_message.dart';
 import 'package:happy_postcode_flutter/models/address.dart';
 import 'package:happy_postcode_flutter/pages/main_page.dart';
 import 'package:happy_postcode_flutter/providers/address_provider.dart';
-import 'package:postcode/postcode.dart';
 import 'package:provider/provider.dart';
 
 class DataSearch extends SearchDelegate {
@@ -55,7 +54,7 @@ class DataSearch extends SearchDelegate {
           case ConnectionState.waiting:
             return ListSkeleton(
               style: SkeletonStyle(
-                theme: SkeletonTheme.Light,
+                theme: SkeletonTheme.Dark,
                 isShowAvatar: true,
                 barCount: 2,
                 isAnimation: true,
@@ -121,5 +120,6 @@ class DataSearch extends SearchDelegate {
       TextStyle(color: Colors.white, fontSize: 16);
 
   @override
-  ThemeData appBarTheme(BuildContext context) => AppTheme.buildTheme();
+  ThemeData appBarTheme(BuildContext context) =>
+      Provider.of<ThemeChanger>(context).currentTheme;
 }

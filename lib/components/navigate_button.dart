@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mapbox_navigation/library.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:happy_postcode_flutter/components/app_theme.dart';
 import 'package:happy_postcode_flutter/providers/address_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -45,7 +44,7 @@ class _NavigateButtonState extends State<NavigateButton> {
       builder: (context, provider, child) => MaterialButton(
         minWidth: width - 120,
         child: Text('Iniciar viagem', style: TextStyle(color: Colors.white)),
-        color: HexColor("#ff5208"),
+        color: Colors.orange[700],
         shape: StadiumBorder(),
         elevation: 0,
         splashColor: Colors.transparent,

@@ -6,34 +6,38 @@ import 'package:provider/provider.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 import 'components/app_theme.dart';
-import 'core/network/network_manager.dart';
-import 'service/IPostcode_service.dart';
-import 'service/postcode_service.dart';
 
 void main() async {
   await DotEnv.load(fileName: '.env');
-  runApp(PostcodeApp());
-}
-
-class PostcodeApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
+  runApp(
+    MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (_) => new ThemeChanger(2),
+        ),
         ChangeNotifierProvider(
           create: (_) => new AddressProvider(),
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Location Delivery',
-        home: LoadingPage(),
-        routes: {
-          'home': (_) => MainPage(),
-          'loading': (_) => LoadingPage(),
-        },
-        theme: AppTheme.buildTheme(),
-      ),
+      child: FlexDeliveryApp(),
+    ),
+  );
+}
+
+class FlexDeliveryApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Location Delivery',
+      home: LoadingPage(),
+      routes: {
+        'home': (_) => MainPage(),
+        'loading': (_) => LoadingPage(),
+      },
+      theme: currentTheme,
     );
   }
 }
