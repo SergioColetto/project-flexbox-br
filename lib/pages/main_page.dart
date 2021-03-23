@@ -32,7 +32,7 @@ class MainPage extends StatelessWidget {
                 children: <Widget>[
                   Expanded(
                     child: Center(
-                      child: Text("Flex Box"),
+                      child: Text("Flex Delivery"),
                     ),
                   ),
                   IconButton(
@@ -104,27 +104,18 @@ class _MenuPrincipal extends StatelessWidget {
       child: Container(
         child: Column(
           children: <Widget>[
+            // Expanded(child: _ListaOpciones()),
             SafeArea(
-              child: Container(
-                width: double.infinity,
-                height: 150,
-                child: CircleAvatar(
-                  backgroundColor: accentColor,
-                  child: Text(
-                    'FH',
-                    style: TextStyle(fontSize: 50),
-                  ),
+              child: Expanded(
+                child: ListTile(
+                  leading: Icon(Icons.lightbulb_outline, color: accentColor),
+                  title: Text('Dark Mode'),
+                  trailing: Switch.adaptive(
+                      value: appTheme.darkTheme,
+                      activeColor: accentColor,
+                      onChanged: (value) => appTheme.darkTheme = value),
                 ),
               ),
-            ),
-            Expanded(child: _ListaOpciones()),
-            ListTile(
-              leading: Icon(Icons.lightbulb_outline, color: accentColor),
-              title: Text('Dark Mode'),
-              trailing: Switch.adaptive(
-                  value: appTheme.darkTheme,
-                  activeColor: accentColor,
-                  onChanged: (value) => appTheme.darkTheme = value),
             ),
           ],
         ),

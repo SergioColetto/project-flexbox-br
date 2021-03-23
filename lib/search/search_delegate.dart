@@ -86,7 +86,7 @@ class DataSearch extends SearchDelegate {
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.add_circle, color: Colors.green),
+                        icon: Icon(Icons.add_circle, color: Colors.grey),
                         onPressed: () async {
                           final addressById =
                               await provider.findById(address.placeId);
